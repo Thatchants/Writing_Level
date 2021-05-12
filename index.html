@@ -1,0 +1,321 @@
+<div id="background">
+    <div id="title" class="border">
+        <div style="font-size: 15px">
+            <br>MGT 330</br>
+            <br>Section 1</br>
+            <br>Fall 2020</br>
+        </div>
+        <div>
+            <br>Team 6</br>
+            <br>Creativity Activity</br>
+            <div style="font-size: 25px">
+                <br>Creative Quality vs Subject Knowledge</br>
+            </div>
+        </div>
+        <div style="font-size: 15px">
+            <br>Adam Sharrah</br>
+            <br>Andrew Book</br>
+            <br>Cassie Young</br>
+            <br>Jenna Janowski</br>
+            <br>Jordan Schneidmiller</br>
+        </div>
+    </div>
+    
+    <div class="instructions border">
+        <br>Instructions</br>
+        <br>You will be writing about three different topics. The first will be something that you know a lot about. The second will be something you are familiar with. The third will be something you don't know anything about.</br>
+        <br>- You will be limited to 2 minutes for each topic.</br>
+        <br>- Instructions for each individual topic will be in the section below.</br>
+        <br>- Press <span style="color: blue">Start Timer</span> button to begin writing then press <span style="color: blue">Next</span> button to continue to the next topic.</br>
+        <br>- <span id="important" style="color: red">IMPORTANT</span>: Type in full sentences and end your sentences with periods only!!! The metric we use to evaluate your writing will only work if you do exactly this!</br>
+        <br>- You should probably do this on a computer with a keyboard.</br>
+    </div>
+    
+    <div id="spec_instr" class="instructions border">
+    </div>
+
+    <div id="buttons" class="border">
+        <button id="timer" class="my_button">
+            Start Timer
+        </button>
+        <button id="next" class="my_button">
+            Next
+        </button>
+        <button id="results" class="my_button">
+            Results
+        </button>
+    </div>
+
+    <div class="border" style="height: 300px">
+        <label for="text_input" id="text_input_label">
+            Enter Your Ideas Here:
+        </label>
+        <textarea type="text" id="text_input" style="; width:100%; height:100%"></textarea>
+        <div id="text_input_placeholder" style="background-color: #ffbb88; width:100%; height:100%"></div>
+    </div>
+    
+    <div id="elapsed_time" class="border">
+        Remaining Time: Not Started
+    </div>
+    
+    <div style="background-color: #ff7800; font-size: 13px">
+        Made With: HTML, JavaScript, JQuery, CSS
+    </div>
+    
+</div>
+
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+
+<script>
+$(document).ready(function(){
+
+    var instructions_1 = "<br><b>Instructions for Writing #1.</b></br>" + 
+    "<br>- Pick a topic that you have a great deal of knowledge on. (Your major, a hobby, etc.)</br>" + 
+    "<br>- You should be able to go into great detail. You should know a lot more about this topic than most people. Write all that you know about that subject.</br>" + 
+    "<br>- Pretend you are speaking to an expert in the field and you are trying to impress them with your knowledge. Do not make up any information, only write the information that you know to be true.</br>" + 
+    "<br>- Please do not conduct any research on this topic before answering this question. Write in full sentences ended by periods please. Write as much as you can.</br>" + 
+    "<br>- Begin immediately. Do not prepare.</br>";
+
+    var instructions_2 = "<br><b>Instructions for Writing #2.</b></br>" + 
+    "<br>- Write all that you know about the effects of global warming on society.</br>" + 
+    "<br>- Pretend you are speaking to an expert in the field and you are trying to impress them with your knowledge. Do not make up any information, only write the information that you know to be true.</br>" + 
+    "<br>- Please do not conduct any research on this topic before answering this question. Write in full sentences ended by periods please. Write as much as you can.</br>" + 
+    "<br>- (If you happen to know a lot about global warming, choose something different that you feel most people have some understanding of like How a bike works or What people do in Canada)</br>" + 
+    "<br>- Begin immediately. Do not prepare.</br>";
+    
+    var instructions_3 = "<br><b>Instructions for Writing #3.</b></br>" + 
+    "<br>- Write all that you know about open heart surgery.</br>" + 
+    "<br>- Pretend you are speaking to an expert in the field and you are trying to impress them with your knowledge. Do not make up any information, only write the information that you know to be true.</br>" + 
+    "<br>- Please do not conduct any research on this topic before answering this question. Write in full sentences ended by periods please. Write as much as you can.</br>" + 
+    "<br>- (If you happen to know a lot about heart surgery, choose something different that you feel most people know almost nothing about like Cricket or Snow Hydrology)</br>" + 
+    "<br>- Begin immediately. Do not prepare.</br>";
+    
+    $('#spec_instr').html(instructions_1);
+
+    $('#text_input').hide();
+    $('#next').hide();
+    $('#results').hide();
+
+    var start_time = -1;
+    var writing = 1;
+    var flesch_score = [-1, -1, -1];
+    var unique = [-1, -1, -1];
+    var word_count = [-1, -1, -1];
+    
+    $('#timer').click(function(){
+        if(start_time == -1){
+            var d = new Date();
+            start_time = d.getTime();
+            $('#text_input').val('');
+            $('#text_input').show();
+            $('#text_input_placeholder').hide();
+            $('#timer').hide();
+        }
+    });
+    
+    $('#next').click(function() {
+        $('#next').hide();
+        $('#timer').show();
+        writing++;
+        if(writing == 2){
+            $('#spec_instr').html(instructions_2);
+        }else if(writing == 3){
+            $('#spec_instr').html(instructions_3);
+        }
+        
+    });
+    
+    $('#results').click(function() {
+        $('#text_input_label').text("Results:");
+        $('#text_input_placeholder').html(
+        '<table>' +
+            '<tr>' +
+                '<th>Topic</th>' +
+                '<th>Word Count</th>' +
+                '<th>Unique Words</th>' +
+                '<th>Complexity</th>' +
+            '</tr>' +
+            '<tr>' +
+                '<td>1. Your Knowledgeable Topic</td>' +
+                '<td>' + word_count[0] + '</td>' +
+                '<td>' + unique[0] + '</td>' +
+                '<td>' + flesch_score[0] + '/100</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td>2. Global Warming</td>' +
+                '<td>' + word_count[1] + '</td>' +
+                '<td>' + unique[1] + '</td>' +
+                '<td>' + flesch_score[1] + '/100</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td>3. Open Heart Surgery</td>' +
+                '<td>' + word_count[2] + '</td>' +
+                '<td>' + unique[2] + '</td>' +
+                '<td>' + flesch_score[2] + '/100</td>' +
+            '</tr>' +
+        '</table>' +
+        '<br>Complexity calculated using the Flesch Reading Ease Readability formula (scores inverted). For information click <a href="https://readabilityformulas.com/flesch-reading-ease-readability-formula.php" target="_blank">here</a></br>' + 
+        '<br></br>' + 
+        '<br>Your results are most likely predictable. This just shows that you are capable of throwing out more ideas when you know the subject better. Assuming you understand your favorite subject better than open heart surgery, your complexity will usually be higher for the subject you chose. This also applies to the amount that you wrote and how many unique words you used. When in a position where creativity regarding a particular subject is needed, deep knowledge of that subject helps.</br>');
+    });
+    
+    function updateTime() {
+        var elapsed_time = -1;
+        if(start_time != -1){
+            var d = new Date();
+            current_time = d.getTime();
+            elapsed_time = Math.floor(((current_time - start_time)/1000))
+            seconds = (120-elapsed_time).toString()
+            $('#elapsed_time').text("Remaining Time: " + seconds + " seconds");
+        }
+        if(elapsed_time >120){
+            $('#text_input').hide();
+            
+            flesch($('#text_input').val());
+            $('#text_input_placeholder').text($('#text_input').val());
+            $('#text_input_placeholder').show();
+            start_time = -1;
+            $('#elapsed_time').text("Remaining Time: Finished");
+            if(writing != 3){
+                $('#next').show();
+            }else{
+                $('#results').show();
+            }
+        }
+    }
+    
+    setInterval(updateTime, 1000);
+    
+    function flesch(text) {
+        var constant = 206.835;
+        var ASL_multiplier = 1.015;
+        var ASW_multiplier = 84.6;
+        
+        var words = text.split(" ");
+        
+        
+        for(var i = 0;i < words.length;i++){
+            words[i] = words[i].replace(/\W/ig, "").toLowerCase();
+        }
+        
+        var set_words = new Set(words);
+        unique[writing-1] = set_words.size;
+        word_count[writing-1] = words.length;
+        
+        num_sentences = (text.split(".").length - 1);
+        num_words = (words.length);
+        
+        var total_syllables = 0;
+        for(var i = 0;i < words.length;i++){
+            total_syllables += new_count(words[i]);
+        }
+        var ASW = total_syllables/num_words;
+        var ASL = num_words/num_sentences;
+        
+        var RE = constant - (ASL_multiplier * ASL) - (ASW_multiplier * ASW)
+        
+        flesch_score[writing-1] = convert_flesch(RE).toString();
+    }
+    
+    function new_count(word) {
+        word = word.replace(/\W/ig, "");
+        if(word.length == 0){
+            return 1;
+        }
+        if(/\d/.test(word)){
+            return 1;
+        }
+        /*
+        *https://stackoverflow.com/questions/5686483/how-to-compute-number-of-syllables-in-a-word-in-javascript
+        */
+        word = word.toLowerCase();
+        if(word.length <= 3) { return 1; }
+        word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+        word = word.replace(/^y/, '');
+        return word.match(/[aeiouy]{1,2}/g).length;
+    }
+    
+    function convert_flesch(score){
+        if(score < 0) score = 0;
+        if(score > 100)score = 100;
+        return Math.floor(100-score);
+    }
+    
+    var important_color = 0;
+    function updateImportant () {
+        if(important_color < 30){
+            if(important_color%2 == 0){
+                $('#important').css("background-color","black");
+                $('#important').css("color","red");
+            }else{
+                $('#important').css("background-color","red");
+                $('#important').css("color","black");
+            }
+            important_color++;
+        }
+    }
+    setInterval(updateImportant, 400);
+});
+</script>
+
+<style>
+#title {
+    color: #000022;
+    height: 13%;
+    text-align: center;
+    min-height: 185px;
+    font-size: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+#title div {
+    width: 100%;
+}
+#buttons {
+    display: flex;
+    justify-content: space-between;
+}
+#buttons button {
+    width: 100%;
+}
+.my_button {
+    background-color: #ff9812
+}
+.instructions {
+    color: #000022;
+}
+#background {
+    background-color: #ff7800;
+    height: 100%;
+    font-family: sans-serif;
+}
+.border {
+    background-color: #ff9966;
+    border-style: solid;
+    border-color: #ff7800;
+    border-width: 10px;
+}
+br {
+    line-height:10px;
+}
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
